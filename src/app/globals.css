@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme{
+  --color-primary:#D89B00;
+  --color-secondary:#E1C300;
+  --color-accent:#696969;
+  --color-dark-accent:#262626;
+}
+
+@theme inline{
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-hero: var(--font-cinzel), serif;
+}
+
+html {
+  color: white;
+}
