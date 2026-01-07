@@ -30,7 +30,7 @@ export default function Home() {
   const [isHydrated, setIsHydrated] = useState(false);
 
   const { smartAccountAddress, approvePaymaster } = useSmartAccount();
-  const { isApproved, isChecking, ethBalance } =
+  const { isApproved, isChecking, ethBalance, refresh } =
     useApprovalStatus(smartAccountAddress);
 
   useEffect(() => {
@@ -61,6 +61,7 @@ export default function Home() {
       (token) => token.address as `0x${string}`
     );
     await approvePaymaster(tokenAddresses);
+    await refresh(false);
   };
 
   // Show activation modal if connected but not approved

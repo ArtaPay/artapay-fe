@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPublicClient, http, type Address } from "viem";
 import { LISK_SEPOLIA } from "@/config/chains";
 import { ERC20_ABI } from "@/config/abi";
@@ -14,14 +14,16 @@ export function useApprovalStatus(smartAccountAddress: Address | null) {
   const [isChecking, setIsChecking] = useState(false);
   const [ethBalance, setEthBalance] = useState<bigint>(BigInt(0));
 
-  useEffect(() => {
-    const checkApproval = async () => {
+  const checkApproval = useCallback(
+    async (showLoading = false) => {
       if (!smartAccountAddress) {
         setIsApproved(null);
+        setEthBalance(BigInt(0));
         return;
       }
-
-      setIsChecking(true);
+      if (showLoading) {
+        setIsChecking(true);
+      }
       try {
         // Check if all tokens are approved to Paymaster
         const approvalChecks = await Promise.all(
@@ -52,12 +54,36 @@ export function useApprovalStatus(smartAccountAddress: Address | null) {
         console.error("Failed to check approval status:", err);
         setIsApproved(false);
       } finally {
-        setIsChecking(false);
+        if (showLoading) {
+          setIsChecking(false);
+        }
+      }
+    },
+    [smartAccountAddress]
+  );
+
+  useEffect(() => {
+    if (!smartAccountAddress) {
+      setIsApproved(null);
+      setEthBalance(BigInt(0));
+      return;
+    }
+
+    checkApproval(true);
+    const intervalId = setInterval(() => checkApproval(false), 7000);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        checkApproval(false);
       }
     };
+    document.addEventListener("visibilitychange", handleVisibility);
 
-    checkApproval();
-  }, [smartAccountAddress]);
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [smartAccountAddress, checkApproval]);
 
-  return { isApproved, isChecking, ethBalance };
+  return { isApproved, isChecking, ethBalance, refresh: checkApproval };
 }
