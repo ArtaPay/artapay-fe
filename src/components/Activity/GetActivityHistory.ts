@@ -121,6 +121,8 @@ export async function fetchActivityHistory(
       }
     }
 
+    const processedLogIds = new Set<string>();
+
     for (const [txHash, pair] of swapCandidates.entries()) {
       if (!pair.out || !pair.in) continue;
       if (pair.out.log.blockNumber == null || pair.in.log.blockNumber == null) {
@@ -140,8 +142,9 @@ export async function fetchActivityHistory(
         formatUnits(pair.in.log.args?.value || 0n, pair.in.token.decimals)
       );
 
+      const activityId = `${txHash}-swap`;
       chunkActivities.push({
-        id: `${txHash}-swap`,
+        id: activityId,
         type: "swap",
         status: "confirmed",
         timestamp,
@@ -153,6 +156,7 @@ export async function fetchActivityHistory(
         swapToCurrencyIcon: `/icons/${pair.in.token.symbol.toLowerCase()}.svg`,
         txHash,
       });
+      processedLogIds.add(activityId);
     }
 
     const paymentActivityIds = new Set<string>();
@@ -173,6 +177,7 @@ export async function fetchActivityHistory(
       const logId = `${entry.log.transactionHash}-${entry.log.logIndex}-payment-${entry.role}`;
       if (paymentActivityIds.has(logId)) continue;
       paymentActivityIds.add(logId);
+      processedLogIds.add(logId);
 
       if (entry.role === "payer") {
         const token = getTokenByAddress(args.payToken);
@@ -194,7 +199,9 @@ export async function fetchActivityHistory(
       } else {
         const token = getTokenByAddress(args.requestedToken);
         if (!token) continue;
-        const amount = Number(formatUnits(args.requestedAmount, token.decimals));
+        const amount = Number(
+          formatUnits(args.requestedAmount, token.decimals)
+        );
 
         chunkActivities.push({
           id: logId,
@@ -217,6 +224,10 @@ export async function fetchActivityHistory(
       }
       const logId = `${entry.log.transactionHash}-${entry.log.logIndex}`;
       if (swapLogIds.has(logId)) continue;
+
+      // Prevent duplicates (e.g. self-transfers appearing in both send and receive lists)
+      if (processedLogIds.has(logId)) continue;
+      processedLogIds.add(logId);
 
       const from = (entry.log.args?.from as string | undefined)?.toLowerCase();
       const to = (entry.log.args?.to as string | undefined)?.toLowerCase();

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   Menu,
@@ -8,19 +8,30 @@ import {
   SwapContent,
   ActivityContent,
 } from "@/components/Menu";
-import { WalletButton, BalanceDisplay } from "@/components/Wallet";
+import {
+  WalletButton,
+  BalanceDisplay,
+  ActivationModal,
+} from "@/components/Wallet";
+import { useSmartAccount } from "@/hooks/useSmartAccount";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
+import { TOKENS } from "@/config/constants";
 
 const contentComponents = {
   send: SendContent,
   receive: ReceiveContent,
   swap: SwapContent,
   activity: ActivityContent,
-}
+};
 const STORAGE_KEY = "artapay_active_menu";
 
 export default function Home() {
   const [activeMenu, setActiveMenu] = useState<MenuType>("send");
   const [isHydrated, setIsHydrated] = useState(false);
+
+  const { smartAccountAddress, approvePaymaster } = useSmartAccount();
+  const { isApproved, isChecking, ethBalance } =
+    useApprovalStatus(smartAccountAddress);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -45,12 +56,21 @@ export default function Home() {
     [activeMenu]
   );
 
+  const handleActivate = async () => {
+    const tokenAddresses = TOKENS.map(
+      (token) => token.address as `0x${string}`
+    );
+    await approvePaymaster(tokenAddresses);
+  };
+
+  // Show activation modal if connected but not approved
+  const showActivationModal =
+    smartAccountAddress && !isChecking && isApproved === false;
+
   if (!isHydrated) {
     return (
       <div className="min-h-screen bg-zinc-900 p-8">
-        <div className="max-w-2xl mx-auto space-y-8">
-          {/* Skeleton */}
-        </div>
+        <div className="max-w-2xl mx-auto space-y-8">{/* Skeleton */}</div>
       </div>
     );
   }
@@ -73,6 +93,15 @@ export default function Home() {
         <Menu activeMenu={activeMenu} onMenuChange={handleMenuChange} />
         <ActiveContent />
       </div>
+
+      {/* Activation Modal - Cannot be closed */}
+      {showActivationModal && smartAccountAddress && (
+        <ActivationModal
+          ethBalance={ethBalance}
+          onActivate={handleActivate}
+          smartAccountAddress={smartAccountAddress}
+        />
+      )}
     </div>
   );
 }

@@ -71,7 +71,14 @@ export default function SwapToken() {
   // Check if balance is sufficient
   const numAmount = parseFloat(amount) || 0;
   const numBalance = parseFloat(balance) || 0;
-  const hasInsufficientBalance = numAmount > 0 && numAmount > numBalance;
+  const quoteTotalRequired = swapQuote
+    ? parseFloat(
+        formatUnits(BigInt(swapQuote.totalUserPays), fromCurrency.decimals)
+      )
+    : numAmount;
+
+  const hasInsufficientBalance =
+    numAmount > 0 && quoteTotalRequired > numBalance;
   const hasNoBalance = numBalance === 0;
 
   // Debounced calculation - triggers 1 second after user stops typing
@@ -165,13 +172,13 @@ export default function SwapToken() {
       // Create failed receipt
       const receiptData: ReceiptData = {
         id: Date.now().toString(),
-        type: 'swap',
-        status: 'failed',
+        type: "swap",
+        status: "failed",
         timestamp: new Date(),
         amount: parseFloat(amount),
         currency: fromCurrency.symbol,
         currencyIcon: fromCurrency.icon,
-        errorMessage: err instanceof Error ? err.message : 'Swap failed',
+        errorMessage: err instanceof Error ? err.message : "Swap failed",
       };
       setReceipt(receiptData);
       setShowReceipt(true);
@@ -323,8 +330,8 @@ export default function SwapToken() {
           {isLoadingBalance
             ? "..."
             : numBalance.toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{" "}
+                maximumFractionDigits: 4,
+              })}{" "}
           {fromCurrency.symbol}
         </div>
       )}
@@ -339,8 +346,8 @@ export default function SwapToken() {
           {isLoading
             ? "PROCESSING..."
             : hasInsufficientBalance
-              ? "INSUFFICIENT BALANCE"
-              : "SWAP NOW"}
+            ? "INSUFFICIENT BALANCE"
+            : "SWAP NOW"}
         </button>
       )}
 

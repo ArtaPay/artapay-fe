@@ -79,8 +79,15 @@ export default function InputAddressContent({
   // Check balance
   const numBalance = parseFloat(balance) || 0;
   const numAmount = parseFloat(amountInput);
+
+  // Estimate gas fee as 0.5% of amount (heuristic since actual fee depends on Paymaster)
+  const estimatedFee = Number.isFinite(numAmount) ? numAmount * 0.005 : 0;
+  const totalRequired = Number.isFinite(numAmount)
+    ? numAmount + estimatedFee
+    : 0;
+
   const hasInsufficientBalance =
-    Number.isFinite(numAmount) && numAmount > 0 && numAmount > numBalance;
+    Number.isFinite(numAmount) && numAmount > 0 && totalRequired > numBalance;
   const hasNoBalance = numBalance === 0;
 
   const handleSubmit = useCallback(
@@ -193,6 +200,17 @@ export default function InputAddressContent({
             placeholder="0"
             className="w-full p-4 bg-zinc-800 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-primary transition-colors"
           />
+          {smartAccountAddress &&
+            Number.isFinite(numAmount) &&
+            numAmount > 0 && (
+              <div className="text-xs text-right text-zinc-500">
+                Est. Fee: ~
+                {estimatedFee.toLocaleString(undefined, {
+                  maximumFractionDigits: 6,
+                })}{" "}
+                {currency.symbol} (0.5%)
+              </div>
+            )}
         </div>
 
         {/* Insufficient Balance Warning */}
@@ -200,11 +218,11 @@ export default function InputAddressContent({
           <div className="flex items-center gap-2 p-3 bg-orange-500/20 border border-orange-500 rounded-lg text-orange-400 text-sm">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>
-              Insufficient {currency.symbol} balance. You have{" "}
-              {numBalance.toLocaleString(undefined, {
+              Insufficient balance. Required:{" "}
+              {totalRequired.toLocaleString(undefined, {
                 maximumFractionDigits: 4,
               })}{" "}
-              {currency.symbol}
+              {currency.symbol} (incl. fee)
             </span>
           </div>
         )}
