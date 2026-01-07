@@ -23,7 +23,7 @@ export function useApprovalStatus(smartAccountAddress: Address | null) {
 
       setIsChecking(true);
       try {
-        // Check if at least one token is approved to Paymaster
+        // Check if all tokens are approved to Paymaster
         const approvalChecks = await Promise.all(
           TOKENS.map(async (token) => {
             try {
@@ -46,9 +46,8 @@ export function useApprovalStatus(smartAccountAddress: Address | null) {
         });
         setEthBalance(balance);
 
-        // If any token is approved, consider account activated
-        const hasApproval = approvalChecks.some((approved) => approved);
-        setIsApproved(hasApproval);
+        const hasAllApprovals = approvalChecks.every((approved) => approved);
+        setIsApproved(hasAllApprovals);
       } catch (err) {
         console.error("Failed to check approval status:", err);
         setIsApproved(false);
