@@ -187,14 +187,23 @@ export default function TransactionPopup({
           quoteResult.amountOut < requiredRequestedToken &&
           amountIn > 0n
         ) {
-          const perUnitOut = quoteResult.amountOut / amountIn;
-          const deficit = requiredRequestedToken - quoteResult.amountOut;
-          const extraIn =
-            perUnitOut > 0n
-              ? (deficit + perUnitOut - 1n) / perUnitOut
-              : 1n;
-          amountIn = amountIn + (extraIn > 0n ? extraIn : 1n);
+          if (quoteResult.amountOut === 0n) {
+            amountIn = amountIn + 1n;
+          } else {
+            let amountInNeeded =
+              (requiredRequestedToken * amountIn + quoteResult.amountOut - 1n) /
+              quoteResult.amountOut;
+            if (amountInNeeded <= amountIn) {
+              amountInNeeded = amountIn + 1n;
+            }
+            amountIn = amountInNeeded;
+          }
           quoteResult = await getQuote(amountIn);
+
+          if (quoteResult.amountOut < requiredRequestedToken) {
+            amountIn = amountIn + 1n;
+            quoteResult = await getQuote(amountIn);
+          }
         }
 
         setSwapQuote({
