@@ -1,50 +1,201 @@
 # ArtaPay Frontend
+Frontend web app for the ArtaPay dApp built with Next.js that provides wallet onboarding, QR payments, swaps, and activity views for Lisk Sepolia.
 
-Frontend web app for the ArtaPay dApp built with Next.js.
+## Overview
+ArtaPay Frontend provides:
 
-## Requirements
-- Node.js 18+ (LTS recommended)
-- npm 9+ (or newer)
+- **Wallet + Smart Account Onboarding**: Privy auth and ERC-4337 smart accounts
+- **QR Payments**: Scan and generate payment requests
+- **Stablecoin Swaps**: Quote and prepare swaps via StableSwap
+- **Activity Views**: Recent transactions and payment receipts
+- **Configurable Network + Tokens**: Chain, contract, and token metadata via env
 
-## Setup
-1. Enter the frontend folder:
-    `cd artapay-fe`
-2. Copy the environment file:
-    `cp .env.example .env`
-    PowerShell: `Copy-Item .env.example .env`
-3. Fill in the values in `.env` (see the full list in `.env.example`).
-4. Install dependencies:
-    `npm install --legacy-peer-deps`
-5. Start the development server:
-    `npm run dev`
+## Architecture
+### Core Modules
+#### 1. **Next.js App Router** - UI Shell
+Main UI under `src/app` with layouts and routes.
 
-The app will run at `http://localhost:3000`.
+**Key Features:**
 
-## Environment Variables
-Use `.env.example` as a template. Important variables:
-- Chain: `NEXT_PUBLIC_CHAIN_ID`, `NEXT_PUBLIC_CHAIN_NAME`, `NEXT_PUBLIC_RPC_URL`
-- Explorer: `NEXT_PUBLIC_BLOCK_EXPLORER_NAME`, `NEXT_PUBLIC_BLOCK_EXPLORER_URL`
-- Native currency: `NEXT_PUBLIC_NATIVE_CURRENCY_NAME`, `NEXT_PUBLIC_NATIVE_CURRENCY_SYMBOL`,
-`NEXT_PUBLIC_NATIVE_CURRENCY_DECIMALS`
-- Smart account: `NEXT_PUBLIC_ENTRY_POINT_ADDRESS`, `NEXT_PUBLIC_SIMPLE_ACCOUNT_FACTORY`,
-`NEXT_PUBLIC_PAYMASTER_ADDRESS`
-- Contracts: `NEXT_PUBLIC_STABLE_SWAP_ADDRESS`, `NEXT_PUBLIC_PAYMENT_PROCESSOR_ADDRESS`
-- Services: `NEXT_PUBLIC_GELATO_API_KEY`, `NEXT_PUBLIC_SIGNER_API_URL`, `NEXT_PUBLIC_PRIVY_APP_ID`
-- Token list + decimals: `NEXT_PUBLIC_TOKEN_*_ADDRESS`, `NEXT_PUBLIC_TOKEN_*_DECIMALS`
-- Misc: `NEXT_PUBLIC_ACTIVITY_LOOKBACK_BLOCKS`
+- App router pages and layouts
+- Global styles and assets
+- SSR/CSR support via Next.js
 
-## Available Scripts
- - `npm run dev` - start dev server
-- `npm run build` - build for production
-- `npm run start` - start production server
-- `npm run lint` - run ESLint
+#### 2. **Web3 Provider** - Wallet + Chain Context
+Wraps wagmi/viem configuration and smart account hooks.
 
-## Production Build
+**Key Features:**
+
+- Chain and contract config from env
+- Smart account initialization
+- Privy-based login (optional)
+
+#### 3. **API Clients** - Backend + On-chain Helpers
+Frontend calls the backend signer and swap helpers.
+
+**Key Features:**
+
+- Signer API integration for paymaster data
+- Swap quote + calldata retrieval
+
+#### 4. **Feature Modules** - Payments + Swap UI
+Composable UI for payments, swaps, and activity.
+
+**Key Features:**
+
+- QR scan and generate flows
+- Send/receive and swap views
+- Activity list and receipts
+
+## Fee Structure
+Frontend surfaces the same on-chain fee model defined in `artapay-sc`.
+
+| Fee Type       | Rate          | Paid By | Token      |
+| -------------- | ------------- | ------- | ---------- |
+| Platform Fee   | 0.3% (30 BPS) | Payer   | Stablecoin |
+| Swap Fee       | 0.1% (10 BPS) | User    | Stablecoin |
+
+## Setup & Installation
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Installation
+
+```bash
+# From repo root
+cd artapay-fe
+
+# Install dependencies
+npm install
+```
+
+### Environment Setup
+Create a `.env` file in the root directory:
+
+```bash
+# =====================================================
+# FRONTEND CONFIGURATION
+# =====================================================
+
+# Network
+NEXT_PUBLIC_CHAIN_ID=4202
+NEXT_PUBLIC_CHAIN_NAME=Lisk Sepolia
+NEXT_PUBLIC_RPC_URL=https://rpc.sepolia-api.lisk.com
+NEXT_PUBLIC_BLOCK_EXPLORER_NAME=Blockscout
+NEXT_PUBLIC_BLOCK_EXPLORER_URL=https://sepolia-blockscout.lisk.com
+NEXT_PUBLIC_NATIVE_CURRENCY_NAME=Ether
+NEXT_PUBLIC_NATIVE_CURRENCY_SYMBOL=ETH
+NEXT_PUBLIC_NATIVE_CURRENCY_DECIMALS=18
+
+# Services
+NEXT_PUBLIC_GELATO_API_KEY=
+NEXT_PUBLIC_SIGNER_API_URL=http://localhost:3001
+NEXT_PUBLIC_PRIVY_APP_ID=
+
+# Contracts
+NEXT_PUBLIC_ENTRY_POINT_ADDRESS=0x0000000071727De22E5E9d8BAf0edAc6f37da032
+NEXT_PUBLIC_SIMPLE_ACCOUNT_FACTORY=<DEPLOYED_ADDRESS>
+NEXT_PUBLIC_PAYMASTER_ADDRESS=<DEPLOYED_ADDRESS>
+NEXT_PUBLIC_STABLE_SWAP_ADDRESS=<DEPLOYED_ADDRESS>
+NEXT_PUBLIC_PAYMENT_PROCESSOR_ADDRESS=<DEPLOYED_ADDRESS>
+
+# Tokens (repeat for all supported stablecoins)
+NEXT_PUBLIC_DEFAULT_TOKEN_SYMBOL=USDC
+NEXT_PUBLIC_TOKEN_USDC_ADDRESS=<DEPLOYED_ADDRESS>
+NEXT_PUBLIC_TOKEN_USDC_DECIMALS=6
+
+# Activity
+NEXT_PUBLIC_ACTIVITY_LOOKBACK_BLOCKS=200000
+```
+
+Note: Use `.env.example` for the full list of token variables.
+
+## Testing
+No automated tests are included yet.
+
+## Deployment
+### Run Locally (Dev)
+
+```bash
+npm run dev
+```
+
+### Build Production
+
 ```bash
 npm run build
+```
+
+### Run Production Server
+
+```bash
 npm run start
+```
 
-## Troubleshooting
+## Network Information
+### Lisk Sepolia Testnet
 
-- If npm install fails due to peer dependencies, use npm install --legacy-peer-deps.
-- Ensure NEXT_PUBLIC_RPC_URL and contract addresses match the selected network.
+- **Chain ID**: 4202
+- **RPC URL**: https://rpc.sepolia-api.lisk.com
+- **Block Explorer**: https://sepolia-blockscout.lisk.com
+- **EntryPoint v0.7**: `0x0000000071727De22E5E9d8BAf0edAc6f37da032`
+
+## Supported Stablecoins
+
+| Symbol | Name               | Decimals | Region |
+| ------ | ------------------ | -------- | ------ |
+| USDC   | USD Coin           | 6        | US     |
+| USDT   | Tether USD         | 6        | US     |
+| IDRX   | Indonesia Rupiah   | 6        | ID     |
+| JPYC   | JPY Coin           | 8        | JP     |
+| EURC   | Euro Coin          | 6        | EU     |
+| MXNT   | Mexican Peso Token | 6        | MX     |
+| CNHT   | Chinese Yuan Token | 6        | CN     |
+
+## Contract Addresses
+### Lisk Sepolia (Testnet)
+
+```
+EntryPoint:            0x0000000071727De22E5E9d8BAf0edAc6f37da032
+SimpleAccountFactory:  <DEPLOYED_ADDRESS>
+Paymaster:             <DEPLOYED_ADDRESS>
+StableSwap:            <DEPLOYED_ADDRESS>
+PaymentProcessor:      <DEPLOYED_ADDRESS>
+```
+
+## Security Considerations
+
+- **Public Env Vars**: `NEXT_PUBLIC_*` values are exposed to the browser. Do not put secrets here.
+- **API Keys**: Use restricted API keys for client-side services.
+- **Network Mismatch**: Keep contract addresses aligned with the selected chain.
+- **QR Validation**: Validate and sanitize QR payloads before use.
+
+## Development
+### Code Style
+This project uses:
+
+- TypeScript
+- Next.js App Router
+- Tailwind CSS
+- wagmi/viem + Privy for wallet/auth
+
+### Project Structure
+
+```
+artapay-fe/
+|-- src/
+|   |-- app/              # Next.js app router pages
+|   |-- components/       # UI components
+|   |-- config/           # Chain, ABI, and env config
+|   |-- hooks/            # Web3 hooks
+|   |-- api/              # Backend API helpers
+|   |-- lib/              # Utilities
+|-- public/               # Static assets
+|-- package.json
+|-- next.config.ts
+```
+
+## License
+MIT License - see LICENSE file for details
