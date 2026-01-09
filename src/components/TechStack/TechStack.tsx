@@ -67,10 +67,10 @@ const textVariants = {
 export default function TechStack() {
     return (
         <section
-            className="w-full min-h-screen bg-black flex flex-col items-center justify-center px-4 py-16"
+            className="w-full min-h-screen bg-black flex flex-col items-center justify-center px-4 py-8 md:py-16"
             style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
         >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-16 text-center tracking-wider font-hero text-primary">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-16 text-center tracking-wider font-hero text-primary">
                 Integrated With
             </h1>
 
@@ -82,7 +82,7 @@ export default function TechStack() {
                     return (
                         <motion.div
                             key={tech.name}
-                            variants={containerVariants}
+                            // variants={containerVariants}
                             initial="initial"
                             animate="animate"
                             whileHover="hover"
@@ -102,13 +102,13 @@ export default function TechStack() {
                             {/* Icon container */}
                             <motion.div
                                 variants={iconVariants}
-                                className="relative z-10 w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40"
+                                className="relative z-10 w-16 h-16 md:w-24 md:h-24 lg:w-32 lg:h-32"
                             >
                                 <Image
                                     src={tech.icon}
                                     alt={tech.name}
                                     fill
-                                    className="object-contain p-4 transition-all duration-300"
+                                    className="object-contain p-2 md:p-4 transition-all duration-300"
                                     sizes="(max-width: 768px) 50vw, 33vw"
                                 />
                             </motion.div>
@@ -116,7 +116,7 @@ export default function TechStack() {
                             {/* Label that appears on hover */}
                             <motion.span
                                 variants={textVariants}
-                                className="relative z-10 font-hero text-black text-lg md:text-xl lg:text-2xl font-semibold mt-2"
+                                className="relative z-10 font-hero text-black text-sm md:text-lg lg:text-xl font-semibold mt-1 md:mt-2 whitespace-nowrap"
                             >
                                 {tech.name}
                             </motion.span>

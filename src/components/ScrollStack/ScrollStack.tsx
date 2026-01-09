@@ -18,7 +18,7 @@ export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
     description
 }) => (
     <div
-        className={`scroll-stack-card relative w-full h-[500px] my-8 rounded-[40px] shadow-[0_0_30px_rgba(0,0,0,0.1)] overflow-hidden box-border origin-top will-change-transform ${itemClassName}`.trim()}
+        className={`scroll-stack-card relative w-full h-[300px] md:h-[500px] my-4 md:my-8 rounded-[24px] md:rounded-[40px] shadow-[0_0_30px_rgba(0,0,0,0.1)] overflow-hidden box-border origin-top will-change-transform ${itemClassName}`.trim()}
         style={{
             backfaceVisibility: 'hidden',
             transformStyle: 'preserve-3d'
@@ -35,12 +35,12 @@ export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
             </div>
         )}
 
-        <div className="relative z-10 h-full flex flex-col justify-end p-12">
+        <div className="relative z-10 h-full flex flex-col justify-end p-6 md:p-12">
             {label && (
-                <h3 className="text-white text-4xl font-bold mb-3 font-hero">{label}</h3>
+                <h3 className="text-white text-2xl md:text-4xl font-bold mb-2 md:mb-3 font-hero">{label}</h3>
             )}
             {description && (
-                <p className="text-white/90 text-lg mb-4 font-sans">{description}</p>
+                <p className="text-white/90 text-sm md:text-lg mb-2 md:mb-4 font-sans">{description}</p>
             )}
             {children}
         </div>
@@ -366,7 +366,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
                 willChange: 'scroll-position'
             }}
         >
-            <div className="scroll-stack-inner pt-[20vh] px-4 md:px-20 pb-[50rem] min-h-screen">
+            <div className="scroll-stack-inner pt-[10vh] px-4 md:px-20 pb-[30rem] min-h-screen">
                 {children}
                 {/* Spacer so the last pin can release cleanly */}
                 <div className="scroll-stack-end w-full h-px" />

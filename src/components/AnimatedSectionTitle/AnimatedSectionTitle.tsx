@@ -119,7 +119,7 @@ export default function AnimatedSectionTitle({
     };
 
     return (
-        <div ref={containerRef} className="overflow-hidden">
+        <div ref={containerRef} className="overflow-hidden hidden md:block">
             <h2
                 ref={titleRef}
                 className={`${variantClasses[variant]} ${className}`}

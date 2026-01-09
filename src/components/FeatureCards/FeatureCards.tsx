@@ -9,34 +9,34 @@ export default function FeatureCards() {
   const { scrollYProgress } = useScroll({
     target: ref,
     // "start end" = progress 0 ketika top container baru menyentuh bottom viewport
-    // "center center" = progress 1 ketika center container di center viewport
-    offset: ["start end", "center center"],
+    // "start center" = progress 1 ketika top container mencapai 50% viewport (center)
+    offset: ["start end", "start center"],
   });
 
-  // Stroke animation: selesai di 60% scroll progress
-  // pathLength dimulai dari 0 (tidak terlihat) dan berakhir di 1.2 di progress 0.6
-  const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
+  // Animation completes at 100% scroll progress (when section reaches 50% viewport)
+  // pathLength selesai di progress 1.0 (tepat di 50% viewport)
+  const pathLengthFirst = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
-  // Content opacity: fade in lebih smooth (0.4 to 0.8) - tidak terlalu cepat
-  const contentOpacity = useTransform(scrollYProgress, [0.6, 0.9], [0, 1]);
+  // Content opacity: fade in di akhir animasi (0.7 to 1.0)
+  const contentOpacity = useTransform(scrollYProgress, [0.7, 1], [0, 1]);
 
-  const pathLengthSecond = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
-  const pathLengthThird = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
-  const pathLengthFourth = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
-  const pathLengthFifth = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
+  const pathLengthSecond = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const pathLengthThird = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const pathLengthFourth = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const pathLengthFifth = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   const features: FeatureCardItem[] = [
     {
-      title: "Paymaster",
-      description: "Kalimat dengan maksimal lima kata",
+      title: "Gasless Transactions",
+      description: "Pay gas fees directly with stablecoins. No ETH required.",
     },
     {
-      title: "Paymaster",
-      description: "Kalimat dengan maksimal lima kata",
+      title: "Auto-Swap Engine",
+      description: "Pay with any token you hold, settle in the token merchants need automatically.",
     },
     {
-      title: "Paymaster",
-      description: "Kalimat dengan maksimal lima kata",
+      title: "QR Payment",
+      description: "Fast and convenient payment between users.",
     },
   ];
 
@@ -44,7 +44,7 @@ export default function FeatureCards() {
     // Container untuk scroll tracking
     // Height cukup untuk memberikan ruang scroll selama animasi
     <div
-      className="min-h-[150vh] bg-black w-full relative"
+      className="min-h-[120vh] bg-black w-full relative"
       ref={ref}
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >

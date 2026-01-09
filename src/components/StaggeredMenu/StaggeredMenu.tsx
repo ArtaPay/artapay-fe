@@ -473,13 +473,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 h-full bg-black flex flex-col p-[8em_2em_2em_10em] overflow-y-auto z-10 backdrop-blur-[12px] pointer-events-auto"
+          className="staggered-menu-panel absolute top-0 right-0 h-full bg-black flex flex-col p-[5em_1.5em_1.5em_1.5em] md:p-[8em_2em_2em_10em] overflow-y-auto z-10 backdrop-blur-[12px] pointer-events-auto"
           style={{ WebkitBackdropFilter: 'blur(12px)' }}
           aria-hidden={!open}
         >
-          <div className="sm-panel-inner flex-1 flex flex-col gap-5">
+          <div className="sm-panel-inner flex-1 flex flex-col gap-5 items-start">
             <ul
-              className="sm-panel-list list-none m-0 p-0 flex flex-col gap-2"
+              className="sm-panel-list list-none m-0 p-0 flex flex-col gap-2 items-start"
               role="list"
               data-numbering={displayItemNumbering || undefined}
             >
@@ -487,7 +487,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 items.map((it, idx) => (
                   <li className="sm-panel-itemWrap relative overflow-hidden leading-none" key={it.label + idx}>
                     <a
-                      className="sm-panel-item font-hero relative text-white font-semibold text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]"
+                      className="sm-panel-item font-hero relative text-white font-semibold text-[1.2rem] md:text-[4rem] cursor-pointer leading-none tracking-[-1px] md:tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline"
                       href={it.link}
                       aria-label={it.ariaLabel}
                       data-index={idx + 1}
@@ -500,7 +500,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 ))
               ) : (
                 <li className="sm-panel-itemWrap relative overflow-hidden leading-none" aria-hidden="true">
-                  <span className="sm-panel-item font-hero relative  text-white font-semibold text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]">
+                  <span className="sm-panel-item font-hero relative text-white font-semibold text-[1.2rem] md:text-[4rem] cursor-pointer leading-none tracking-[-1px] md:tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline">
                     <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
                       No items
                     </span>
@@ -510,9 +510,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             </ul>
 
             {displaySocials && socialItems && socialItems.length > 0 && (
-              <div className="sm-socials mt-auto pt-8 flex flex-col gap-2" aria-label="Social links">
+              <div className="sm-socials mt-auto pt-8 flex flex-col gap-2 items-start" aria-label="Social links">
                 <ul
-                  className="sm-socials-list list-none m-0 p-0 flex flex-col gap-1"
+                  className="sm-socials-list list-none m-0 p-0 flex flex-col gap-1 items-start"
                   role="list"
                 >
                   {socialItems.map((s, i) => (
@@ -521,9 +521,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         href={s.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="sm-socials-link font-sans text-[1.1rem] font-normal text-white no-underline relative inline-flex items-center gap-1 py-[2px] transition-[color,opacity] duration-300 ease-linear"
+                        className="sm-socials-link font-sans text-[0.75rem] md:text-[1.1rem] font-normal text-white no-underline relative inline-flex items-center gap-1 py-[2px] transition-[color,opacity] duration-300 ease-linear"
                       >
-                        {s.label} <span className="text-sm">↗</span>
+                        {s.label} <span className="text-xs md:text-sm">↗</span>
                       </a>
                     </li>
                   ))}

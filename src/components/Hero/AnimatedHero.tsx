@@ -4,35 +4,53 @@ import { useRef, useLayoutEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Iridescent } from '@/components/Iridescent';
+import Link from 'next/link';
 
 // Register ScrollTrigger
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
+// Store original text outside component to prevent loss on re-renders
+const ORIGINAL_TITLE = 'Gasless Payment\nfor Everyone';
+const ORIGINAL_DESC = 'Your hero description goes here. Make it compelling and engaging.';
+
 export default function AnimatedHero() {
     const heroRef = useRef<HTMLDivElement>(null);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const descRef = useRef<HTMLParagraphElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const buttonRef = useRef<HTMLAnchorElement>(null);
     const leftColumnRef = useRef<HTMLDivElement>(null);
     const rightColumnRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
-        const ctx = gsap.context(() => {
-            // Split text into characters
-            if (titleRef.current) {
-                const text = titleRef.current.innerText || '';
-                titleRef.current.innerHTML = text
-                    .split('')
-                    .map((char, i) => {
-                        if (char === '\n') return '<br/>'; 
-                        if (char === ' ') return '<span class="inline-block" style="width: 0.3em;">&nbsp;</span>';
-                        return `<span class="inline-block char-${i}" style="opacity: 0; color: #D89B00;">${char}</span>`;
-                    })
-                    .join('');
+        // Reset to original text first to ensure clean state
+        if (titleRef.current) {
+            titleRef.current.innerHTML = ORIGINAL_TITLE.split('\n').join('<br/>');
+        }
+        if (descRef.current) {
+            descRef.current.textContent = ORIGINAL_DESC;
+        }
 
-                const chars = titleRef.current.querySelectorAll('span');
+        const ctx = gsap.context(() => {
+            // Split text into characters, but wrap each word to prevent mid-word breaks
+            if (titleRef.current) {
+                const text = ORIGINAL_TITLE;
+                // Split by lines first, then words, then characters
+                titleRef.current.innerHTML = text
+                    .split('\n')
+                    .map(line => {
+                        return line.split(' ').map(word => {
+                            const chars = word.split('').map((char, i) =>
+                                `<span class="inline-block char" style="opacity: 0; color: #D89B00;">${char}</span>`
+                            ).join('');
+                            // Wrap each word in a container that prevents breaking
+                            return `<span class="inline-flex" style="white-space: nowrap;">${chars}</span>`;
+                        }).join('<span class="inline-block" style="width: 0.3em;">&nbsp;</span>');
+                    })
+                    .join('<br/>');
+
+                const chars = titleRef.current.querySelectorAll('span.char');
 
                 // Simple reveal animation
                 gsap.fromTo(
@@ -70,7 +88,7 @@ export default function AnimatedHero() {
 
             // Description fade in with stagger
             if (descRef.current) {
-                const text = descRef.current.innerText || '';
+                const text = ORIGINAL_DESC;
                 descRef.current.innerHTML = text
                     .split(/(\s+)/)
                     .map(part => {
@@ -179,35 +197,36 @@ export default function AnimatedHero() {
     return (
         <section
             ref={heroRef}
-            className="flex flex-col lg:flex-row h-screen relative overflow-hidden"
+            className="flex flex-col md:flex-row min-h-screen relative overflow-hidden"
             style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
         >
             {/* Left Column - Hero Text (Black Container) */}
             <div
                 ref={leftColumnRef}
-                className="w-full lg:w-1/2 h-1/2 lg:h-screen flex flex-col justify-center items-center lg:items-start px-8 lg:px-16 relative bg-black z-10"
+                className="w-full md:w-1/2 min-h-[60vh] md:min-h-screen flex flex-col justify-center items-start px-6 sm:px-8 md:px-16 py-16 md:py-0 relative bg-black z-10"
             >
                 <h1
                     ref={titleRef}
-                    className="text-5xl lg:text-7xl font-hero font-bold mb-4"
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-hero font-bold mb-4"
                     style={{
                         perspective: '1000px',
                         transformStyle: 'preserve-3d',
                     }}
                 >
-                    Gasless Payment <br/>
+                    Gasless Payment <br />
                     for Everyone
                 </h1>
 
                 <p
                     ref={descRef}
-                    className="text-lg lg:text-xl text-white mb-8 text-center font-sans lg:text-left max-w-xl">
+                    className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-6 md:mb-8 text-left font-sans max-w-xl">
                     Your hero description goes here. Make it compelling and engaging.
                 </p>
 
-                <button
+                <Link
+                    href="/app"
                     ref={buttonRef}
-                    className="relative px-8 py-4 border-2 border-primary text-white font-hero font-bold text-lg overflow-hidden group"
+                    className="relative px-6 sm:px-8 py-3 sm:py-4 border-2 border-primary text-white font-hero font-bold text-sm sm:text-base md:text-lg overflow-hidden group inline-block"
                     style={{
                         background: 'transparent',
                         transition: 'all 0.3s ease',
@@ -234,13 +253,13 @@ export default function AnimatedHero() {
                     <span className="relative z-10 group-hover:text-black transition-colors duration-300">
                         Get Started
                     </span>
-                </button>
+                </Link>
             </div>
 
             {/* Right Column - Iridescent (Yellow/Orange Container) */}
             <div
                 ref={rightColumnRef}
-                className="w-full lg:w-1/2 h-1/2 lg:h-screen relative overflow-hidden"
+                className="w-full md:w-1/2 min-h-[40vh] md:min-h-screen relative overflow-hidden"
             >
                 <Iridescent color={[1, 0.6, 0.2]} mouseReact={false} />
             </div>

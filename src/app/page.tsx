@@ -20,7 +20,7 @@ if (typeof window !== "undefined") {
 }
 
 const menuItems = [
-  { label: 'Connect Wallet', ariaLabel: 'Connect wallet', link: '/start' },
+  { label: 'Get Started', ariaLabel: 'Get Started', link: '/app' },
   { label: 'Docs', ariaLabel: 'View our documentation', link: 'https://github.com/artapay/' },
 ];
 
