@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { CurrencyDropdown, Currency, currencies } from "@/components/Currency";
 import Modal from "@/components/Modal";
+import { ReceiptPopUp, ReceiptData } from "@/components/ReceiptPopUp";
 import { useSmartAccount } from "@/hooks/useSmartAccount";
 import { LISK_SEPOLIA } from "@/config/chains";
 import {
@@ -47,6 +48,10 @@ export default function InputAddressContent({
     message: string;
     onRetry?: () => void;
   }>({ isOpen: false, title: "", message: "" });
+
+  // Receipt states
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const {
     smartAccountAddress,
@@ -145,20 +150,40 @@ export default function InputAddressContent({
             tokenAddress: currency.tokenAddress as Address,
             decimals: currency.decimals,
           });
-          setErrorModal({
-            isOpen: true,
-            title: "Transfer Successful",
-            message: `Transaction sent! TX: ${txHash}`,
+          // Show success receipt
+          setReceipt({
+            id: txHash,
+            type: "send",
+            status: "success",
+            timestamp: new Date(),
+            amount: amountValue,
+            currency: currency.symbol,
+            currencyIcon: currency.icon,
+            toAddress: recipient,
+            txHash: txHash,
           });
+          setShowReceipt(true);
           await fetchBalance();
+          // Reset form
+          setAddress("");
+          setAmountInput("");
         }
       } catch (error) {
         console.error("Send error:", error);
-        setErrorModal({
-          isOpen: true,
-          title: "Send Failed",
-          message: error instanceof Error ? error.message : "Transaction failed",
+        // Show failure receipt
+        setReceipt({
+          id: Date.now().toString(),
+          type: "send",
+          status: "failed",
+          timestamp: new Date(),
+          amount: amountValue,
+          currency: currency.symbol,
+          currencyIcon: currency.icon,
+          toAddress: address,
+          errorMessage:
+            error instanceof Error ? error.message : "Transaction failed",
         });
+        setShowReceipt(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -218,8 +243,8 @@ export default function InputAddressContent({
                 {isLoadingBalance
                   ? "..."
                   : numBalance.toLocaleString(undefined, {
-                    maximumFractionDigits: 4,
-                  })}{" "}
+                      maximumFractionDigits: 4,
+                    })}{" "}
                 {currency.symbol}
               </span>
             )}
@@ -283,16 +308,17 @@ export default function InputAddressContent({
             !smartAccountAddress ||
             hasInsufficientBalance
           }
-          className={`w-full py-4 font-bold text-xl rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${hasInsufficientBalance
-            ? "bg-orange-500/50 text-orange-200"
-            : "bg-primary text-black hover:bg-primary/90"
-            }`}
+          className={`w-full py-4 font-bold text-xl rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+            hasInsufficientBalance
+              ? "bg-orange-500/50 text-orange-200"
+              : "bg-primary text-black hover:bg-primary/90"
+          }`}
         >
           {isSubmitting || isLoading
             ? "SENDING..."
             : hasInsufficientBalance
-              ? "INSUFFICIENT BALANCE"
-              : "SEND NOW"}
+            ? "INSUFFICIENT BALANCE"
+            : "SEND NOW"}
         </button>
       </form>
 
@@ -322,6 +348,13 @@ export default function InputAddressContent({
           </button>
         )}
       </Modal>
+
+      {/* Receipt Popup */}
+      <ReceiptPopUp
+        isOpen={showReceipt}
+        data={receipt}
+        onClose={() => setShowReceipt(false)}
+      />
     </div>
   );
 }
