@@ -82,6 +82,16 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const [hasBackdropBlur, setHasBackdropBlur] = useState(false);
 
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
+  const scrollLockRef = useRef<{
+    scrollY: number;
+    bodyOverflow: string;
+    bodyPosition: string;
+    bodyTop: string;
+    bodyLeft: string;
+    bodyRight: string;
+    bodyWidth: string;
+    htmlOverflow: string;
+  } | null>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -459,6 +469,47 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closeOnClickAway, open, closeMenu]);
+
+  React.useEffect(() => {
+    if (!open || !isFixed) return;
+
+    const body = document.body;
+    const html = document.documentElement;
+    const scrollY = window.scrollY;
+
+    scrollLockRef.current = {
+      scrollY,
+      bodyOverflow: body.style.overflow,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      htmlOverflow: html.style.overflow,
+    };
+
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    html.style.overflow = "hidden";
+
+    return () => {
+      const prev = scrollLockRef.current;
+      if (!prev) return;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.position = prev.bodyPosition;
+      body.style.top = prev.bodyTop;
+      body.style.left = prev.bodyLeft;
+      body.style.right = prev.bodyRight;
+      body.style.width = prev.bodyWidth;
+      html.style.overflow = prev.htmlOverflow;
+      window.scrollTo(0, prev.scrollY);
+      scrollLockRef.current = null;
+    };
+  }, [open, isFixed]);
 
   // Auto-hide header on scroll down, show on scroll up
   // Also handle backdrop blur based on hero section position
