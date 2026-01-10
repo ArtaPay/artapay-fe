@@ -13,7 +13,7 @@ export default function ScanContent() {
   const isDisabled = !smartAccountAddress;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-y-2">
       {isReady && !smartAccountAddress && (
         <div className="p-3 bg-yellow-500/20 border border-yellow-500 rounded-lg text-yellow-400 text-sm text-center">
           Connect wallet to send tokens

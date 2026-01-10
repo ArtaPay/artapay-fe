@@ -135,14 +135,14 @@ export default function QRCode({ onScanResult, disabled }: QRCodeProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 p-6">
+    <div className="flex flex-col items-center gap-4 p-4">
       {isCameraOpen && !disabled ? (
         <OpenCamera onScan={handleScan} onBack={handleBack} />
       ) : (
         <>
           <ClosedCamera onScanNow={handleScanNow} disabled={disabled} />
 
-          <p className="text-accent">or</p>
+          <p className="text-accent text-sm">or</p>
 
           <ImportFromGallery
             onImport={handleImport}

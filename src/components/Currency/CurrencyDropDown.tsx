@@ -22,13 +22,13 @@ export default function CurrencyDropdown({ value, onChange }: CurrencyDropdownPr
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
+
   return (
     <div ref={dropdownRef} className="relative">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-zinc-800 rounded-xl border border-zinc-700 hover:border-zinc-600 transition-colors"
+        className="w-full flex items-center justify-between p-4 bg-zinc-800 rounded-xl border border-zinc-700 hover:border-zinc-600 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-zinc-700 flex items-center justify-center overflow-hidden">
@@ -48,7 +48,7 @@ export default function CurrencyDropdown({ value, onChange }: CurrencyDropdownPr
               key={currency.id}
               type="button"
               onClick={() => { onChange(currency); setIsOpen(false); }}
-              className={`w-full flex items-center gap-3 p-4 hover:bg-zinc-700 transition-colors ${value.id === currency.id ? 'bg-zinc-700' : ''}`}
+              className={`w-full flex items-center gap-3 p-4 hover:bg-zinc-700 transition-colors cursor-pointer ${value.id === currency.id ? 'bg-zinc-700' : ''}`}
             >
               <div className="w-10 h-10 rounded-full bg-zinc-600 flex items-center justify-center overflow-hidden">
                 <Image src={currency.icon} alt={currency.name} width={40} height={40} className="object-cover" />

@@ -133,7 +133,7 @@ export default function BalanceDisplay() {
       {/* Balance with Token Selector */}
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="flex items-center gap-1.5 px-2 py-1 bg-zinc-800/50 rounded-lg hover:bg-zinc-800 transition-colors"
+        className="flex items-center gap-1.5 px-2 py-1 bg-zinc-800/50 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
       >
         <Image
           src={`/icons/${selectedToken.symbol.toLowerCase()}.svg`}
@@ -152,7 +152,7 @@ export default function BalanceDisplay() {
       {/* Eye Toggle */}
       <button
         onClick={() => setIsHidden(!isHidden)}
-        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer"
         title={isHidden ? "Show balance" : "Hide balance"}
       >
         {isHidden ? (
@@ -183,9 +183,8 @@ export default function BalanceDisplay() {
               <button
                 key={token.symbol}
                 onClick={() => handleTokenSelect(index)}
-                className={`w-full flex items-center justify-between gap-2 px-3 py-2 hover:bg-zinc-700 transition-colors ${
-                  index === selectedTokenIndex ? "bg-zinc-700" : ""
-                }`}
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 hover:bg-zinc-700 transition-colors cursor-pointer ${index === selectedTokenIndex ? "bg-zinc-700" : ""
+                  }`}
               >
                 <div className="flex items-center gap-2">
                   <Image

@@ -8,7 +8,7 @@ interface ClosedCameraProps {
 
 export default function ClosedCamera({ onScanNow, disabled }: ClosedCameraProps) {
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-4">
       {/* Camera Preview Box */}
       <div className="w-full max-w-sm p-8 border-2 border-dashed border-accent rounded-xl">
         <div className="flex flex-col items-center gap-4 text-center">
@@ -27,9 +27,8 @@ export default function ClosedCamera({ onScanNow, disabled }: ClosedCameraProps)
       <button
         onClick={onScanNow}
         disabled={disabled}
-        className={`w-full max-w-sm py-4 bg-primary text-black font-bold text-xl rounded-xl transition-colors ${
-          disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-primary/90"
-        }`}
+        className={`w-full max-w-sm py-4 bg-primary text-black font-bold text-xl rounded-xl transition-colors ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-primary/90"
+          }`}
       >
         SCAN NOW
       </button>

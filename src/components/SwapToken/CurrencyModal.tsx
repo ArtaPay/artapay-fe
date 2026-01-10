@@ -34,7 +34,7 @@ export default function CurrencyModal({
         <div className="p-4 border-b border-zinc-700 flex items-center justify-between">
           <span />
           <h3 className="text-white font-bold text-center">Select Currency</h3>
-          <button onClick={onClose} className="text-zinc-400 hover:text-white">
+          <button onClick={onClose} className="text-zinc-400 hover:text-white cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -46,7 +46,7 @@ export default function CurrencyModal({
                 onSelect(currency);
                 onClose();
               }}
-              className="w-full flex items-center gap-3 p-4 hover:bg-zinc-700 transition-colors"
+              className="w-full flex items-center gap-3 p-4 hover:bg-zinc-700 transition-colors cursor-pointer"
             >
               <Image
                 src={currency.icon}

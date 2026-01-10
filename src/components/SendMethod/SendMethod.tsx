@@ -39,7 +39,7 @@ export default function SendMethod({ activeMethod, onMethodChange }: MethodProps
         [activeMethod, handleMethodClick]
     );
     return (
-        <div className='w-3/4 shadow-[inset_0_0_0_1px_rgba(105,105,105,1)]  rounded-full'>
+        <div className='w-3/4 shadow-[inset_0_0_0_1px_rgba(105,105,105,1)] rounded-full'>
             <div className='flex justify-center items-center'>{methodItems}</div>
         </div>
     )

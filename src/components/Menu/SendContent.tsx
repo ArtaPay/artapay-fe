@@ -16,8 +16,8 @@ const contentComponents = {
 const STORAGE_KEY = "artapay_active_send_method";
 
 export default function SendContent() {
-    const [ activeSendMethod, setActiveSencMethod ] = useState<MethodType>("scan");
-    const [ isHydrated, setIsHydrated ] = useState(false);
+    const [activeSendMethod, setActiveSencMethod] = useState<MethodType>("scan");
+    const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -45,14 +45,14 @@ export default function SendContent() {
     if (!isHydrated) {
         return (
             <div>
-                {}
+                { }
             </div>
         )
     }
     return (
-        <div className="gap-5 flex flex-col">
+        <div className="flex flex-col gap-4">
             <div className="flex flex-col items-center justify-center">
-                <SendMethod activeMethod={activeSendMethod} onMethodChange={handleMethodChange}/>
+                <SendMethod activeMethod={activeSendMethod} onMethodChange={handleMethodChange} />
             </div>
             <div>
                 <ActiveContent />

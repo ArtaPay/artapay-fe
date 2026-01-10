@@ -73,8 +73,8 @@ export default function SwapToken() {
   const numBalance = parseFloat(balance) || 0;
   const quoteTotalRequired = swapQuote
     ? parseFloat(
-        formatUnits(BigInt(swapQuote.totalUserPays), fromCurrency.decimals)
-      )
+      formatUnits(BigInt(swapQuote.totalUserPays), fromCurrency.decimals)
+    )
     : numAmount;
 
   const hasInsufficientBalance =
@@ -237,7 +237,7 @@ export default function SwapToken() {
         </div>
         <button
           onClick={handleSwapCurrencies}
-          className="relative z-10 p-2 bg-zinc-800 rounded-full border border-zinc-700 hover:border-zinc-500 transition-colors"
+          className="relative z-10 p-2 bg-zinc-800 rounded-full border border-zinc-700 hover:border-zinc-500 transition-colors cursor-pointer"
         >
           <ArrowUpDown size={20} className="text-zinc-400" />
         </button>
@@ -330,8 +330,8 @@ export default function SwapToken() {
           {isLoadingBalance
             ? "..."
             : numBalance.toLocaleString(undefined, {
-                maximumFractionDigits: 4,
-              })}{" "}
+              maximumFractionDigits: 4,
+            })}{" "}
           {fromCurrency.symbol}
         </div>
       )}
@@ -341,13 +341,13 @@ export default function SwapToken() {
         <button
           onClick={handleSwapNow}
           disabled={isLoading || hasInsufficientBalance}
-          className="w-full py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading
             ? "PROCESSING..."
             : hasInsufficientBalance
-            ? "INSUFFICIENT BALANCE"
-            : "SWAP NOW"}
+              ? "INSUFFICIENT BALANCE"
+              : "SWAP NOW"}
         </button>
       )}
 

@@ -15,7 +15,7 @@ export default function CurrencyBadge({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 px-2.5 py-1.5 sm:gap-2 sm:px-3 sm:py-2 bg-zinc-800 rounded-full border border-zinc-700 hover:border-zinc-500 transition-colors shrink-0"
+      className="flex items-center gap-1.5 px-2.5 py-1.5 sm:gap-2 sm:px-3 sm:py-2 bg-zinc-800 rounded-full border border-zinc-700 hover:border-zinc-500 transition-colors cursor-pointer shrink-0"
     >
       <Image
         src={currency.icon}

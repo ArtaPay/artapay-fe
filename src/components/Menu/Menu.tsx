@@ -41,7 +41,7 @@ export default function Menu({ activeMenu, onMenuChange }: MenuProps) {
   );
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 gap-6">{menuItems}</div>
+      <div className="grid grid-cols-4 gap-4 mb-4">{menuItems}</div>
     </div>
   );
 }

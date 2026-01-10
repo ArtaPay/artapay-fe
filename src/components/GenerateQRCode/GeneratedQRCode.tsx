@@ -124,7 +124,7 @@ export default function GeneratedQRCode({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-4">
       <div ref={qrRef} className="p-6 bg-white rounded-2xl">
         <QRCodeSVG value={qrValue} size={200} />
       </div>
@@ -138,22 +138,21 @@ export default function GeneratedQRCode({
         </p>
       </div>
 
-      <div className="flex gap-3 w-full max-w-sm">
+      <div className="flex flex-col gap-2 w-full max-w-sm">
         <button
           onClick={handleDownload}
-          className="flex-1 py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           <Download className="w-5 h-5" />
           SAVE QR
         </button>
+        <button
+          onClick={onBack}
+          className="w-full py-4 border border-accent text-white font-bold text-xl rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+        >
+          CANCEL
+        </button>
       </div>
-
-      <button
-        onClick={onBack}
-        className="w-full max-w-sm py-4 bg-zinc-700 text-accent font-bold text-xl rounded-xl hover:bg-zinc-600 transition-colors"
-      >
-        CANCEL
-      </button>
     </div>
   );
 }

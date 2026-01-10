@@ -61,7 +61,7 @@ export default function WalletButton() {
     return (
       <button
         onClick={handleConnect}
-        className="flex items-center gap-2 px-3 py-2 bg-primary text-black font-semibold rounded-xl hover:bg-primary/90 transition-colors text-sm"
+        className="flex items-center gap-2 px-3 py-2 bg-primary text-black font-semibold rounded-xl hover:bg-primary/90 transition-colors cursor-pointer text-sm"
       >
         <Wallet className="w-4 h-4" />
         <span className="hidden xs:inline">Connect</span>
@@ -78,7 +78,7 @@ export default function WalletButton() {
             <div className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0" />
             <button
               onClick={handleCopyAddress}
-              className="text-white font-mono text-xs hover:text-primary transition-colors flex items-center gap-1"
+              className="text-white font-mono text-xs hover:text-primary transition-colors cursor-pointer flex items-center gap-1"
               title="Click to copy"
             >
               {formatAddress(smartAccountAddress)}
@@ -107,7 +107,7 @@ export default function WalletButton() {
       {/* Logout Button */}
       <button
         onClick={logout}
-        className="p-2 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors text-zinc-400 hover:text-white flex-shrink-0"
+        className="p-2 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors cursor-pointer text-zinc-400 hover:text-white flex-shrink-0"
         title="Logout"
       >
         <LogOut className="w-4 h-4" />

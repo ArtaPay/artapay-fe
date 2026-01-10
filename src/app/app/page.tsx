@@ -71,14 +71,14 @@ export default function Start() {
 
   if (!isHydrated) {
     return (
-      <div className="min-h-screen bg-zinc-900 p-8">
+      <div className="min-h-screen bg-black p-8">
         <div className="max-w-2xl mx-auto space-y-8">{/* Skeleton */}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 p-4 sm:p-8">
+    <div className="min-h-screen bg-black p-4 sm:p-8">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header with Logo and Wallet */}
         <div className="flex items-start justify-between gap-4">
@@ -92,8 +92,12 @@ export default function Start() {
           </div>
         </div>
 
-        <Menu activeMenu={activeMenu} onMenuChange={handleMenuChange} />
-        <ActiveContent />
+        <div className="bg-zinc-900 rounded-2xl">
+          <div className="p-4">
+            <Menu activeMenu={activeMenu} onMenuChange={handleMenuChange} />
+            <ActiveContent />
+          </div>
+        </div>
       </div>
 
       {/* Activation Modal - Cannot be closed */}

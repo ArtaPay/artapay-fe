@@ -15,7 +15,7 @@ export default function OpenCamera({ onScan, onBack, onError }: OpenCameraProps)
       onScan(result[0].rawValue);
     }
   }, [onScan]);
-  
+
   const handleError = useCallback((error: unknown) => {
     console.error("QR Scanner Error:", error);
     if (error instanceof Error) {
@@ -41,7 +41,7 @@ export default function OpenCamera({ onScan, onBack, onError }: OpenCameraProps)
       {/* Back Button */}
       <button
         onClick={onBack}
-        className="w-full max-w-sm py-4 border-2 border-accent text-accent font-bold text-xl rounded-xl hover:bg-accent/10 transition-colors"
+        className="w-full max-w-sm py-4 border-2 border-accent text-accent font-bold text-xl rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
       >
         BACK
       </button>

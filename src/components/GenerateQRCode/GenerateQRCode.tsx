@@ -165,7 +165,7 @@ export default function GenerateQRCode() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 p-6">
+    <div className="flex flex-col items-center gap-4 p-4">
       {/* Connection Warning - only show after isReady */}
       {isReady && !smartAccountAddress && (
         <div className="w-full max-w-sm p-3 bg-yellow-500/20 border border-yellow-500 rounded-lg text-yellow-400 text-sm text-center">
@@ -173,7 +173,7 @@ export default function GenerateQRCode() {
         </div>
       )}
 
-      <ClosedQRCode />
+      {/* <ClosedQRCode /> */}
 
       <form onSubmit={handleGenerate} className="w-full max-w-sm space-y-6">
         <div className="space-y-2">
@@ -214,7 +214,7 @@ export default function GenerateQRCode() {
         <button
           type="submit"
           disabled={!smartAccountAddress || isGenerating || isLoading}
-          className="w-full py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-4 bg-primary text-black font-bold text-xl rounded-xl hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? "GENERATING..." : "GENERATE QR"}
         </button>

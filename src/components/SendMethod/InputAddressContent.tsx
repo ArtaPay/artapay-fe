@@ -149,7 +149,7 @@ export default function InputAddressContent({
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {/* Connect wallet message */}
       {isReady && !smartAccountAddress && (
         <div className="mb-4 p-3 bg-yellow-500/20 border border-yellow-500 rounded-lg text-yellow-400 text-sm text-center">
@@ -186,8 +186,8 @@ export default function InputAddressContent({
                 {isLoadingBalance
                   ? "..."
                   : numBalance.toLocaleString(undefined, {
-                      maximumFractionDigits: 4,
-                    })}{" "}
+                    maximumFractionDigits: 4,
+                  })}{" "}
                 {currency.symbol}
               </span>
             )}
@@ -258,17 +258,16 @@ export default function InputAddressContent({
             !smartAccountAddress ||
             hasInsufficientBalance
           }
-          className={`w-full py-4 font-bold text-xl rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            hasInsufficientBalance
-              ? "bg-orange-500/50 text-orange-200"
-              : "bg-primary text-black hover:bg-primary/90"
-          }`}
+          className={`w-full py-4 font-bold text-xl rounded-full transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${hasInsufficientBalance
+            ? "bg-orange-500/50 text-orange-200"
+            : "bg-primary text-black hover:bg-primary/90"
+            }`}
         >
           {isSubmitting || isLoading
             ? "SENDING..."
             : hasInsufficientBalance
-            ? "INSUFFICIENT BALANCE"
-            : "SEND NOW"}
+              ? "INSUFFICIENT BALANCE"
+              : "SEND NOW"}
         </button>
       </form>
     </div>

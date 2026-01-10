@@ -124,9 +124,8 @@ export default function ImportFromGallery({
       <button
         onClick={handleClick}
         disabled={isDisabled}
-        className={`flex items-center gap-3 px-6 py-3 border border-accent rounded-xl transition-colors ${
-          isDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-accent/10"
-        }`}
+        className={`flex items-center gap-3 px-6 py-3 border border-accent rounded-xl transition-colors ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-accent/10"
+          }`}
       >
         <Image src={ImportIcon} alt="Import" width={24} height={24} />
         <span className="text-white font-medium">
