@@ -33,6 +33,20 @@ import {
 import { buildPaymasterData } from "@/lib/paymasterData";
 import { getPaymasterSignature } from "@/api/signerApi";
 
+/**
+ * Transform Gelato rate limit errors into user-friendly messages
+ */
+function transformError(err: unknown): string {
+  const message = err instanceof Error ? err.message : String(err);
+  if (
+    message.toLowerCase().includes("too many requests") ||
+    message.toLowerCase().includes("rate limit")
+  ) {
+    return "Rate limit gelato reached. Please try again a minute later.";
+  }
+  return message;
+}
+
 export function useSmartAccount() {
   const { wallets, ready: privyReady } = useWallets();
   const { authenticated } = usePrivy();
@@ -335,10 +349,10 @@ export function useSmartAccount() {
         setStatus("Approve submitted");
         return { txHash, sender: address };
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Approve failed";
+        const message = transformError(err);
         setError(message);
         setStatus(message);
-        throw err;
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
@@ -371,10 +385,10 @@ export function useSmartAccount() {
         setStatus("Faucet transaction submitted");
         return { txHash, sender: address };
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Faucet failed";
+        const message = transformError(err);
         setError(message);
         setStatus(message);
-        throw err;
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
@@ -458,10 +472,10 @@ export function useSmartAccount() {
         setStatus("UserOp executed on-chain");
         return receipt.txHash || userOpHash;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Transfer failed";
+        const message = transformError(err);
         setError(message);
         setStatus(message);
-        throw err;
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
@@ -558,10 +572,10 @@ export function useSmartAccount() {
         setStatus("Swap executed on-chain");
         return receipt.txHash || userOpHash;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Swap failed";
+        const message = transformError(err);
         setError(message);
         setStatus(message);
-        throw err;
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
@@ -674,10 +688,10 @@ export function useSmartAccount() {
         setStatus("Payment executed");
         return receipt.txHash || userOpHash;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Payment failed";
+        const message = transformError(err);
         setError(message);
         setStatus(message);
-        throw err;
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
