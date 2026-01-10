@@ -1,5 +1,7 @@
-import React, { useLayoutEffect, useRef, useCallback } from 'react';
+import React, { useLayoutEffect, useRef, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
 export interface ScrollStackItemProps {
@@ -62,6 +64,75 @@ interface ScrollStackProps {
     useWindowScroll?: boolean;
     onStackComplete?: () => void;
 }
+
+// Register GSAP ScrollTrigger plugin
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
+
+// Section Title Component with GSAP scroll-triggered underline animation
+const SectionTitle: React.FC = () => {
+    const titleRef = useRef<HTMLHeadingElement>(null);
+    const underlineRef = useRef<HTMLSpanElement>(null);
+
+    useEffect(() => {
+        if (!titleRef.current || !underlineRef.current) return;
+
+        const underlineEl = underlineRef.current;
+
+        // Set initial state - underline hidden to the left
+        gsap.set(underlineEl, {
+            scaleX: 0,
+            transformOrigin: "left center"
+        });
+
+        // Create scroll-triggered animation
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: titleRef.current,
+                start: "top 85%", // Animation starts when element is at 85% from top of viewport
+                end: "top 60%",   // Animation ends when element is at 60% from top of viewport
+                toggleActions: "play none none reverse", // play on enter, reverse on leave
+            }
+        });
+
+        // Animate underline from left to right
+        tl.to(underlineEl, {
+            scaleX: 1,
+            duration: 0.6,
+            ease: "power2.out"
+        });
+
+        return () => {
+            tl.kill();
+            ScrollTrigger.getAll().forEach(trigger => {
+                if (trigger.trigger === titleRef.current) {
+                    trigger.kill();
+                }
+            });
+        };
+    }, []);
+
+    return (
+        <h2
+            ref={titleRef}
+            className="font-hero font-bold text-3xl md:text-5xl lg:text-6xl text-white text-center mb-8 md:mb-12 relative inline-block"
+        >
+            <span className="relative">
+                How it works?
+                {/* Underline element */}
+                <span
+                    ref={underlineRef}
+                    className="absolute left-0 right-0 bottom-0 h-[3px] md:h-[4px] lg:h-[5px]"
+                    style={{
+                        backgroundColor: "#D89B00",
+                        transform: "translateY(4px)"
+                    }}
+                />
+            </span>
+        </h2>
+    );
+};
 
 const ScrollStack: React.FC<ScrollStackProps> = ({
     children,
@@ -367,6 +438,10 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
             }}
         >
             <div className="scroll-stack-inner pt-[10vh] px-4 md:px-20 pb-[30rem] min-h-screen">
+                {/* Section Title with underline animation */}
+                <div className="w-full flex justify-center mb-8 md:mb-16">
+                    <SectionTitle />
+                </div>
                 {children}
                 {/* Spacer so the last pin can release cleanly */}
                 <div className="scroll-stack-end w-full h-px" />

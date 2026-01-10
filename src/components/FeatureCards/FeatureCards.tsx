@@ -2,7 +2,92 @@
 
 import { FeatureCardEffect, FeatureCardItem } from './FeatureCardItem';
 import { useScroll, useTransform } from "motion/react";
-import React from "react";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register GSAP ScrollTrigger plugin
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+// Section Title Component with GSAP scroll-triggered animation on "Artapay"
+const SectionTitle = () => {
+  const containerRef = useRef<HTMLHeadingElement>(null);
+  const artapayRef = useRef<HTMLSpanElement>(null);
+  const highlightRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!artapayRef.current || !highlightRef.current || !containerRef.current) return;
+
+    const artapayEl = artapayRef.current;
+    const highlightEl = highlightRef.current;
+    const textEl = artapayEl.querySelector('.artapay-text') as Element;
+
+    // Set initial state - highlight hidden to the left
+    gsap.set(highlightEl, {
+      scaleX: 0,
+      transformOrigin: "left center",
+      backgroundColor: "#D89B00"
+    });
+
+    // Create scroll-triggered animation
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 80%", // Animation starts when element is at 80% from top of viewport
+        end: "top 50%",   // Animation ends when element is at 50% from top of viewport
+        toggleActions: "play none none reverse", // play on enter, reverse on leave
+      }
+    });
+
+    // Animate highlight from left to right
+    tl.to(highlightEl, {
+      scaleX: 1,
+      duration: 0.5,
+      ease: "power2.out"
+    });
+
+    // Change text color to black (slightly delayed)
+    tl.to(textEl, {
+      color: "#000000",
+      duration: 0.3,
+    }, "-=0.3"); // Overlap with previous animation
+
+    return () => {
+      tl.kill();
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === containerRef.current) {
+          trigger.kill();
+        }
+      });
+    };
+  }, []);
+
+  return (
+    <h2
+      ref={containerRef}
+      className="font-hero font-bold text-3xl md:text-5xl lg:text-6xl text-white text-center mb-8 md:mb-16"
+    >
+      Why choose{" "}
+      <span
+        ref={artapayRef}
+        className="relative inline-block px-2 md:px-4"
+      >
+        {/* Background highlight element */}
+        <span
+          ref={highlightRef}
+          className="absolute inset-0 z-0"
+          style={{ backgroundColor: "#D89B00" }}
+        />
+        {/* Text element */}
+        <span className="artapay-text relative z-10 text-white">
+          Artapay?
+        </span>
+      </span>
+    </h2>
+  );
+};
 
 export default function FeatureCards() {
   const ref = React.useRef(null);
@@ -44,10 +129,16 @@ export default function FeatureCards() {
     // Container untuk scroll tracking
     // Height cukup untuk memberikan ruang scroll selama animasi
     <div
-      className="min-h-[120vh] bg-black w-full relative"
+      className="min-h-[140vh] bg-black w-full relative pt-20 md:pt-32"
       ref={ref}
       style={{ scrollSnapAlign: 'start', scrollSnapStop: 'always' }}
     >
+      {/* Section Title */}
+      <div className="w-full flex justify-center px-4">
+        <SectionTitle />
+      </div>
+
+      {/* Feature Cards */}
       <FeatureCardEffect
         items={features}
         contentOpacity={contentOpacity}

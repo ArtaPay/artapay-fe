@@ -1,25 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { motion, MotionValue } from "motion/react";
-
-const transition = {
-  duration: 0,
-  ease: "linear" as const,
-};
-
-// Glowing border animation variants
-const glowVariants = {
-  initial: {
-    filter: "drop-shadow(0 0 0px #D89B00)",
-  },
-  hover: {
-    filter: "drop-shadow(0 0 20px #D89B00) drop-shadow(0 0 40px #D89B00) drop-shadow(0 0 60px #D89B00)",
-    transition: {
-      duration: 0.3,
-      ease: "easeOut"
-    }
-  }
-};
+import { motion, MotionValue, useInView } from "motion/react";
+import { useRef } from "react";
 
 export interface FeatureCardItem {
   title: string;
@@ -37,66 +19,72 @@ export const FeatureCardEffect = ({
   items: FeatureCardItem[];
   className?: string;
 }) => {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.3 });
+
   return (
     // Sticky container dengan vertical centering
     <div
+      ref={containerRef}
       className={cn(
         "sticky top-0 min-h-screen w-full flex items-center justify-center py-8 md:py-20 px-4",
         className
       )}
     >
       {/* Cards Container - Grid: 2 cols on mobile (2+1 layout), 3 cols on desktop */}
-      <div className="grid grid-cols-2 md:flex md:flex-row gap-3 md:gap-8 items-stretch justify-center max-w-lg md:max-w-none">
+      <div className="grid grid-cols-2 md:flex md:flex-row gap-4 md:gap-10 items-stretch justify-center max-w-lg md:max-w-none">
         {items.map((item, index) => (
           <motion.div
             key={index}
-            initial="initial"
+            initial={{ opacity: 0, y: 50 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+            transition={{
+              duration: 0.6,
+              delay: index * 0.15,
+              ease: "easeOut"
+            }}
             whileHover="hover"
+            variants={{
+              hover: {
+                scale: 1.05,
+                backgroundColor: "#D89B00",
+                transition: { duration: 0.3, ease: "easeOut" }
+              }
+            }}
             className={cn(
-              "relative w-full md:w-[240px] h-[180px] md:h-[320px] flex flex-col items-start justify-center px-3 md:px-6 gap-1 md:gap-4 cursor-pointer",
+              "relative w-full md:w-[300px] lg:w-[340px] h-[220px] md:h-[400px] lg:h-[440px]",
+              "flex items-start justify-center pt-8 md:pt-12 px-4 md:px-8",
+              "bg-transparent border-2 border-[#C9A227] rounded-2xl cursor-pointer",
+              "transition-shadow duration-300 hover:shadow-[0_0_30px_rgba(216,155,0,0.5)]",
               // Third card spans full width on mobile and is centered
               index === 2 && "col-span-2 mx-auto max-w-[50%] md:max-w-none"
             )}
           >
-            {/* Content - Animated opacity */}
+            {/* Content - Animated opacity, aligned left inside centered group */}
             <motion.div
-              className="relative z-10 flex flex-col items-start gap-1 md:gap-4"
+              className="relative z-10 flex flex-col items-start gap-2 md:gap-5 text-left"
               style={{ opacity: contentOpacity }}
             >
-              <h3
-                className="font-hero text-sm md:text-xl lg:text-2xl text-white leading-tight"
+              <motion.h3
+                className="font-hero text-base md:text-2xl lg:text-3xl leading-tight font-semibold"
                 style={{ fontVariant: 'small-caps' }}
+                initial={{ color: "#C9A227" }}
+                variants={{
+                  hover: { color: "#000000", transition: { duration: 0.3 } }
+                }}
               >
                 {item.title}
-              </h3>
-              <p className="font-sans text-[9px] md:text-sm text-[#C9A227] italic leading-relaxed">
+              </motion.h3>
+              <motion.p
+                className="font-sans text-xs md:text-base lg:text-lg leading-relaxed"
+                initial={{ color: "#FFFFFF" }}
+                variants={{
+                  hover: { color: "#000000", transition: { duration: 0.3 } }
+                }}
+              >
                 {item.description}
-              </p>
+              </motion.p>
             </motion.div>
-
-            {/* SVG Border with glow effect on hover */}
-            <motion.svg
-              variants={glowVariants}
-              className="absolute inset-0 w-full h-full pointer-events-none z-20"
-              viewBox="0 0 240 320"
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <motion.rect
-                x="0"
-                y="0"
-                width="240"
-                height="320"
-                rx="16"
-                ry="16"
-                stroke="#C9A227"
-                strokeWidth="2"
-                fill="none"
-                initial={{ pathLength: 0 }}
-                style={{ pathLength: pathLengths[index] || pathLengths[0] }}
-                transition={transition}
-              />
-            </motion.svg>
           </motion.div>
         ))}
       </div>

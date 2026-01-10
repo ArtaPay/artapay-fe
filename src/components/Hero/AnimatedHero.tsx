@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 
 // Store original text outside component to prevent loss on re-renders
 const ORIGINAL_TITLE = 'Gasless Payment\nfor Everyone';
-const ORIGINAL_DESC = 'Your hero description goes here. Make it compelling and engaging.';
+const ORIGINAL_DESC = 'Any Stablecoin. Anywhere. No ETH Needed.';
 
 export default function AnimatedHero() {
     const heroRef = useRef<HTMLDivElement>(null);
@@ -220,7 +220,7 @@ export default function AnimatedHero() {
                 <p
                     ref={descRef}
                     className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-6 md:mb-8 text-left font-sans max-w-xl">
-                    Your hero description goes here. Make it compelling and engaging.
+                    Any Stablecoin. Anywhere. No ETH Needed.
                 </p>
 
                 <Link

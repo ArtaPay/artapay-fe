@@ -73,6 +73,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
   const busyRef = useRef(false);
 
+  // Header visibility state for auto-hide on scroll
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  // Backdrop blur state - false when in hero section (top 30%)
+  const [hasBackdropBlur, setHasBackdropBlur] = useState(false);
+
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
 
   useLayoutEffect(() => {
@@ -380,6 +388,66 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     };
   }, [closeOnClickAway, open, closeMenu]);
 
+  // Auto-hide header on scroll down, show on scroll up
+  // Also handle backdrop blur based on hero section position
+  React.useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const scrollingDown = currentScrollY > lastScrollYRef.current;
+          const scrollingUp = currentScrollY < lastScrollYRef.current;
+
+          // Find hero section element
+          const heroSection = document.querySelector('section') as HTMLElement | null;
+
+          // Calculate hero section bounds
+          let heroThreshold = 0;
+          if (heroSection) {
+            const heroRect = heroSection.getBoundingClientRect();
+            const heroHeight = heroSection.offsetHeight;
+            // 30% from top of hero section
+            heroThreshold = heroHeight * 0.3;
+
+            // Check if we're past 30% of hero section
+            // When hero top is above viewport and we've scrolled past 30% of its height
+            const scrolledPastHeroThreshold = currentScrollY > heroThreshold;
+            setHasBackdropBlur(scrolledPastHeroThreshold);
+          }
+
+          // Show header when at top (within 10px)
+          if (currentScrollY < 10) {
+            setHeaderVisible(true);
+          }
+          // Hide when scrolling down and past threshold (100px)
+          else if (scrollingDown && currentScrollY > 100) {
+            setHeaderVisible(false);
+          }
+          // Show when scrolling up
+          else if (scrollingUp) {
+            setHeaderVisible(true);
+          }
+
+          lastScrollYRef.current = currentScrollY;
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Initial check
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div
       className={`sm-scope z-40 pointer-events-none ${isFixed ? 'fixed top-0 left-0 w-screen h-screen overflow-hidden' : 'w-full h-full'}`}
@@ -415,8 +483,16 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         </div>
 
         <header
-          className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[2em] bg-transparent pointer-events-none z-20"
+          ref={headerRef}
+          className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[2em] pointer-events-none z-20"
           aria-label="Main navigation header"
+          style={{
+            transform: headerVisible ? 'translateY(0)' : 'translateY(-100%)',
+            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.3s ease, background-color 0.3s ease',
+            backdropFilter: hasBackdropBlur ? 'blur(12px)' : 'none',
+            WebkitBackdropFilter: hasBackdropBlur ? 'blur(12px)' : 'none',
+            backgroundColor: hasBackdropBlur ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+          }}
         >
           <div className="sm-logo flex items-center select-none pointer-events-auto" aria-label="Logo">
             <img
