@@ -580,6 +580,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           ? "fixed top-0 left-0 w-screen h-screen overflow-hidden"
           : "w-full h-full"
       }`}
+      style={isFixed ? { height: "100dvh" } : undefined}
     >
       <div
         className={
@@ -786,6 +787,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .sm-line { display: none !important; }
 .sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: black; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 8em 2em 2em 10em; overflow-y: auto; z-index: 10; visibility: hidden; }
+.sm-scope .staggered-menu-panel { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: 100%; pointer-events: none; z-index: 5; visibility: hidden; }
 .sm-scope [data-position='left'] .sm-prelayers { right: auto; left: 0; }
@@ -811,7 +813,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 @media (min-width: 640px) { .sm-scope .sm-panel-item { font-size: 3rem; } }
 @media (min-width: 768px) { .sm-scope .sm-panel-item { font-size: 3.5rem; letter-spacing: -2px; padding-right: 1.4em; } .sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { right: 3.2em; font-size: 18px; } .sm-scope .staggered-menu-panel { padding: 8em 2em 2em 10em; } }
 @media (min-width: 1024px) { .sm-scope .sm-panel-item { font-size: 4rem; } }
-@media (max-width: 767px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; padding: 5em 1.5em 1.5em 1.5em; } .sm-scope .sm-panel-item { font-size: 2.5rem; } }
+@media (max-width: 767px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; padding: 5em 1.5em calc(1.5em + env(safe-area-inset-bottom)) 1.5em; } .sm-scope .sm-panel-item { font-size: 2.5rem; } }
       `}</style>
     </div>
   );

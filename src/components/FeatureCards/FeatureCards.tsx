@@ -113,7 +113,8 @@ export default function FeatureCards() {
   const features: FeatureCardItem[] = [
     {
       title: "Gasless Transactions",
-      description: "Pay gas fees directly with stablecoins. No ETH required.",
+      description:
+        "Using Paymaster (ERC-4337) pay gas fees directly with stablecoins. No ETH required.",
     },
     {
       title: "Auto-Swap Engine",

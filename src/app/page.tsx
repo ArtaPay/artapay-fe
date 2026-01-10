@@ -26,7 +26,7 @@ const menuItems = [
 
 const socialItems = [
   { label: 'Github', link: 'https://github.com/artapay/' },
-  { label: 'X', link: 'https://x.com' },
+  { label: 'X', link: 'https://x.com/artapayment' },
   { label: 'Instagram', link: 'https://instagram.com' },
   { label: 'Discord', link: 'https://discord.com' }
 ];

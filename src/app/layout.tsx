@@ -19,11 +19,11 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "ArtaPay - Gasless Stablecoin Payments",
+  title: "ArtaPay - Seamless Cross-Border Payments",
   description: "Simple QR-based stablecoin payments without gas fees.",
   metadataBase: new URL("https://artapay.vercel.app"),
   openGraph: {
-    title: "ArtaPay - Gasless Stablecoin Payments",
+    title: "ArtaPay - Seamless Cross-Border Payments",
     description: "Simple QR-based stablecoin payments without gas fees.",
     type: "website",
     images: [

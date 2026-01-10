@@ -27,7 +27,7 @@ const footerSections: FooterSection[] = [
     {
         title: 'Community',
         links: [
-            { label: 'X', href: 'https://x.com', external: true },
+            { label: 'X', href: 'https://x.com/artapayment', external: true },
             { label: 'Discord', href: 'https://discord.com', external: true },
             { label: 'Instagram', href: 'https://instagram.com', external: true },
         ],
