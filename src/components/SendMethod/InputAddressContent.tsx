@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { CurrencyDropdown, Currency, currencies } from "@/components/Currency";
+import Modal from "@/components/Modal";
 import { useSmartAccount } from "@/hooks/useSmartAccount";
 import { LISK_SEPOLIA } from "@/config/chains";
 import {
@@ -39,6 +40,14 @@ export default function InputAddressContent({
   const [balance, setBalance] = useState<string>("0");
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
 
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onRetry?: () => void;
+  }>({ isOpen: false, title: "", message: "" });
+
   const {
     smartAccountAddress,
     isReady,
@@ -66,6 +75,12 @@ export default function InputAddressContent({
     } catch (err) {
       console.error("Failed to fetch balance:", err);
       setBalance("0");
+      setErrorModal({
+        isOpen: true,
+        title: "Balance Error",
+        message: err instanceof Error ? err.message : "Failed to fetch balance",
+        onRetry: fetchBalance,
+      });
     } finally {
       setIsLoadingBalance(false);
     }
@@ -127,6 +142,11 @@ export default function InputAddressContent({
         }
       } catch (error) {
         console.error("Send error:", error);
+        setErrorModal({
+          isOpen: true,
+          title: "Send Failed",
+          message: error instanceof Error ? error.message : "Transaction failed",
+        });
       } finally {
         setIsSubmitting(false);
       }
@@ -242,13 +262,6 @@ export default function InputAddressContent({
           </div>
         )}
 
-        {/* Error Message */}
-        {error && (
-          <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-            {error}
-          </div>
-        )}
-
         {/* Send Button */}
         <button
           type="submit"
@@ -270,6 +283,33 @@ export default function InputAddressContent({
               : "SEND NOW"}
         </button>
       </form>
+
+      {/* Error Modal */}
+      <Modal
+        id="send-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
+      >
+        {errorModal.onRetry && (
+          <button
+            onClick={() => {
+              errorModal.onRetry?.();
+              setErrorModal({ ...errorModal, isOpen: false });
+            }}
+            className="w-full py-4 bg-primary text-black font-bold text-lg rounded-xl hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            RETRY
+          </button>
+        )}
+      </Modal>
     </div>
   );
 }

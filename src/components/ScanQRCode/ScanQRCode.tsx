@@ -7,6 +7,7 @@ import TransactionPopup from "./TransactionPopup";
 import { PAYMENT_PROCESSOR_ADDRESS } from "@/config/constants";
 import { LISK_SEPOLIA } from "@/config/chains";
 import { ReceiptPopUp, ReceiptData } from "@/components/ReceiptPopUp";
+import Modal from "@/components/Modal";
 
 interface PaymentRequestPayload {
   version: string;
@@ -35,6 +36,13 @@ export default function QRCode({ onScanResult, disabled }: QRCodeProps) {
   const [importError, setImportError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
+
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({ isOpen: false, title: "", message: "" });
 
   const handleScanNow = () => {
     if (disabled) {
@@ -102,6 +110,11 @@ export default function QRCode({ onScanResult, disabled }: QRCodeProps) {
     } catch (e) {
       console.error("Invalid QR data:", e);
       setImportError(e instanceof Error ? e.message : "Invalid QR Code format");
+      setErrorModal({
+        isOpen: true,
+        title: "Invalid QR Code",
+        message: e instanceof Error ? e.message : "Invalid QR Code format",
+      });
     }
   };
 
@@ -149,19 +162,27 @@ export default function QRCode({ onScanResult, disabled }: QRCodeProps) {
             onError={handleImportError}
             disabled={disabled}
           />
-
-          {/* Error Message */}
-          {importError && (
-            <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center max-w-sm">
-              {importError}
-            </div>
-          )}
         </>
       )}
       <ReceiptPopUp
         isOpen={showReceipt}
         data={receipt}
         onClose={() => setShowReceipt(false)}
+      />
+
+      {/* Error Modal */}
+      <Modal
+        id="scan-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
       />
     </div>
   );

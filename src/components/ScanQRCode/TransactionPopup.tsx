@@ -10,6 +10,7 @@ import { PAYMENT_PROCESSOR_ADDRESS } from "@/config/constants";
 import { createPublicClient, http, formatUnits } from "viem";
 import { LISK_SEPOLIA } from "@/config/chains";
 import { PAYMENT_PROCESSOR_ABI, ERC20_ABI } from "@/config/abi";
+import Modal from "@/components/Modal";
 
 interface PaymentRequestPayload {
   version: string;
@@ -48,6 +49,14 @@ export default function TransactionPopup({
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [balance, setBalance] = useState<string>("0");
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onRetry?: () => void;
+  }>({ isOpen: false, title: "", message: "" });
   const {
     smartAccountAddress,
     payInvoice,
@@ -80,11 +89,11 @@ export default function TransactionPopup({
 
   const requestedAmount = requestedCurrency
     ? Number(
-        formatUnits(
-          BigInt(payload.request.requestedAmountRaw),
-          requestedCurrency.decimals
-        )
+      formatUnits(
+        BigInt(payload.request.requestedAmountRaw),
+        requestedCurrency.decimals
       )
+    )
     : 0;
 
   // Fetch payment quote when payToken changes
@@ -114,6 +123,11 @@ export default function TransactionPopup({
       } catch (err) {
         console.error("Quote error:", err);
         setQuoteError("Failed to calculate payment cost");
+        setErrorModal({
+          isOpen: true,
+          title: "Quote Error",
+          message: err instanceof Error ? err.message : "Failed to calculate payment cost",
+        });
       } finally {
         setIsLoadingQuote(false);
       }
@@ -142,6 +156,11 @@ export default function TransactionPopup({
       } catch (err) {
         console.error("Failed to fetch balance:", err);
         setBalance("0");
+        setErrorModal({
+          isOpen: true,
+          title: "Balance Error",
+          message: err instanceof Error ? err.message : "Failed to fetch balance",
+        });
       } finally {
         setIsLoadingBalance(false);
       }
@@ -188,6 +207,11 @@ export default function TransactionPopup({
       onCancel();
     } catch (err) {
       console.error("Payment error:", err);
+      setErrorModal({
+        isOpen: true,
+        title: "Payment Failed",
+        message: err instanceof Error ? err.message : "Payment failed",
+      });
     }
   };
 
@@ -290,10 +314,6 @@ export default function TransactionPopup({
                 </span>
               </div>
             </div>
-          ) : quoteError ? (
-            <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-              {quoteError}
-            </div>
           ) : null}
         </div>
 
@@ -302,13 +322,6 @@ export default function TransactionPopup({
           <div className="mt-4 flex items-center justify-center gap-2 text-primary text-sm">
             <Loader2 className="w-4 h-4 animate-spin" />
             {status}
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <div className="mt-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-            {error}
           </div>
         )}
 
@@ -333,8 +346,8 @@ export default function TransactionPopup({
             {isLoadingBalance
               ? "..."
               : numBalance.toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}{" "}
+                maximumFractionDigits: 4,
+              })}{" "}
             {payToken.symbol}
           </div>
         )}
@@ -354,8 +367,8 @@ export default function TransactionPopup({
             {isLoading
               ? "PROCESSING..."
               : hasInsufficientBalance
-              ? "INSUFFICIENT BALANCE"
-              : "PAY NOW"}
+                ? "INSUFFICIENT BALANCE"
+                : "PAY NOW"}
           </button>
           <button
             onClick={onCancel}
@@ -366,6 +379,21 @@ export default function TransactionPopup({
           </button>
         </div>
       </div>
+
+      {/* Error Modal */}
+      <Modal
+        id="payment-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
+      />
     </div>
   );
 }

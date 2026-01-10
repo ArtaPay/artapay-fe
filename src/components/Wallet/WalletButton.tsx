@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useSmartAccount } from "@/hooks/useSmartAccount";
 import { Wallet, LogOut, Loader2, Copy, Check } from "lucide-react";
+import Modal from "@/components/Modal";
 
 export default function WalletButton() {
   const { ready, authenticated, login, logout } = usePrivy();
@@ -16,6 +17,14 @@ export default function WalletButton() {
   } = useSmartAccount();
   const [copied, setCopied] = useState(false);
 
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onRetry?: () => void;
+  }>({ isOpen: false, title: "", message: "" });
+
   const handleConnect = async () => {
     if (!authenticated) {
       login();
@@ -24,6 +33,12 @@ export default function WalletButton() {
         await initSmartAccount();
       } catch (err) {
         console.error("Failed to init smart account", err);
+        setErrorModal({
+          isOpen: true,
+          title: "Wallet Error",
+          message: err instanceof Error ? err.message : "Failed to initialize wallet",
+          onRetry: handleConnect,
+        });
       }
     }
   };
@@ -112,6 +127,33 @@ export default function WalletButton() {
       >
         <LogOut className="w-4 h-4" />
       </button>
+
+      {/* Error Modal */}
+      <Modal
+        id="wallet-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
+      >
+        {errorModal.onRetry && (
+          <button
+            onClick={() => {
+              errorModal.onRetry?.();
+              setErrorModal({ ...errorModal, isOpen: false });
+            }}
+            className="w-full py-4 bg-primary text-black font-bold text-lg rounded-xl hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            RETRY
+          </button>
+        )}
+      </Modal>
     </div>
   );
 }

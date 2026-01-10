@@ -13,6 +13,7 @@ import { LISK_SEPOLIA } from "@/config/chains";
 import { createPublicClient, http } from "viem";
 import { ERC20_ABI } from "@/config/abi";
 import { ReceiptPopUp, ReceiptData } from "@/components/ReceiptPopUp";
+import Modal from "@/components/Modal";
 
 const publicClient = createPublicClient({
   chain: LISK_SEPOLIA,
@@ -37,6 +38,14 @@ export default function SwapToken() {
   const [showFromModal, setShowFromModal] = useState(false);
   const [showToModal, setShowToModal] = useState(false);
 
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onRetry?: () => void;
+  }>({ isOpen: false, title: "", message: "" });
+
   const { smartAccountAddress, swapTokens, isLoading, isReady, status, error } =
     useSmartAccount();
 
@@ -58,6 +67,12 @@ export default function SwapToken() {
     } catch (err) {
       console.error("Failed to fetch balance:", err);
       setBalance("0");
+      setErrorModal({
+        isOpen: true,
+        title: "Balance Error",
+        message: err instanceof Error ? err.message : "Failed to fetch balance",
+        onRetry: fetchBalance,
+      });
     } finally {
       setIsLoadingBalance(false);
     }
@@ -263,13 +278,6 @@ export default function SwapToken() {
         />
       </div>
 
-      {/* Error Message */}
-      {quoteError && (
-        <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-          {quoteError}
-        </div>
-      )}
-
       {/* Rate and Fee - Only show when result is available */}
       {swapQuote && !isCalculating && (
         <div className="space-y-2 pt-4">
@@ -293,13 +301,6 @@ export default function SwapToken() {
         <div className="flex items-center justify-center gap-2 text-primary text-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
           {status}
-        </div>
-      )}
-
-      {/* Error Message from Swap */}
-      {error && (
-        <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-          {error}
         </div>
       )}
 
@@ -370,6 +371,33 @@ export default function SwapToken() {
         data={receipt}
         onClose={() => setShowReceipt(false)}
       />
+
+      {/* Error Modal */}
+      <Modal
+        id="swap-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
+      >
+        {errorModal.onRetry && (
+          <button
+            onClick={() => {
+              errorModal.onRetry?.();
+              setErrorModal({ ...errorModal, isOpen: false });
+            }}
+            className="w-full py-4 bg-primary text-black font-bold text-lg rounded-xl hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            RETRY
+          </button>
+        )}
+      </Modal>
     </div>
   );
 }

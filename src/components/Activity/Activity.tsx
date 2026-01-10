@@ -9,6 +9,7 @@ import {
   groupActivitiesByPeriod,
 } from "./GetActivityHistory";
 import { useSmartAccount } from "@/hooks/useSmartAccount";
+import Modal from "@/components/Modal";
 
 export default function Activity() {
   const [groupedActivities, setGroupedActivities] = useState<
@@ -16,6 +17,14 @@ export default function Activity() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onRetry?: () => void;
+  }>({ isOpen: false, title: "", message: "" });
 
   const { smartAccountAddress, isReady } = useSmartAccount();
 
@@ -35,6 +44,12 @@ export default function Activity() {
     } catch (err) {
       console.error("Failed to load activities:", err);
       setError("Failed to load activity history");
+      setErrorModal({
+        isOpen: true,
+        title: "Activity Error",
+        message: err instanceof Error ? err.message : "Failed to load activity history",
+        onRetry: loadActivities,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -113,6 +128,33 @@ export default function Activity() {
           </div>
         </div>
       ))}
+
+      {/* Error Modal */}
+      <Modal
+        id="activity-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
+      >
+        {errorModal.onRetry && (
+          <button
+            onClick={() => {
+              errorModal.onRetry?.();
+              setErrorModal({ ...errorModal, isOpen: false });
+            }}
+            className="w-full py-4 bg-primary text-black font-bold text-lg rounded-xl hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            RETRY
+          </button>
+        )}
+      </Modal>
     </div>
   );
 }

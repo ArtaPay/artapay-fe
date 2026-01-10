@@ -10,6 +10,7 @@ import { PAYMENT_PROCESSOR_ADDRESS } from "@/config/constants";
 import { LISK_SEPOLIA } from "@/config/chains";
 import { parseUnits, keccak256, encodeAbiParameters, toHex } from "viem";
 import { ReceiptPopUp, ReceiptData } from "@/components/ReceiptPopUp";
+import Modal from "@/components/Modal";
 
 interface PaymentRequestPayload {
   version: "artapay-payment-v2";
@@ -46,6 +47,13 @@ export default function GenerateQRCode() {
     isReady,
     status,
   } = useSmartAccount();
+
+  // Error modal state
+  const [errorModal, setErrorModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({ isOpen: false, title: "", message: "" });
 
   // Reset generated QR when user logs out or changes account
   useEffect(() => {
@@ -135,6 +143,11 @@ export default function GenerateQRCode() {
       setError(
         err instanceof Error ? err.message : "Failed to generate QR code"
       );
+      setErrorModal({
+        isOpen: true,
+        title: "QR Generation Failed",
+        message: err instanceof Error ? err.message : "Failed to generate QR code",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -195,13 +208,6 @@ export default function GenerateQRCode() {
           />
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-sm text-center">
-            {error}
-          </div>
-        )}
-
         {/* Status Message */}
         {(isGenerating || isLoading) && (
           <div className="flex items-center justify-center gap-2 text-primary text-sm">
@@ -224,6 +230,21 @@ export default function GenerateQRCode() {
         isOpen={showReceipt}
         data={receipt}
         onClose={handleReceiptClose}
+      />
+
+      {/* Error Modal */}
+      <Modal
+        id="qr-error-modal"
+        className="modal-alert"
+        role="alertdialog"
+        aria-modal={true}
+        aria-labelledby="alert-title"
+        aria-describedby="alert-desc"
+        tabIndex={-1}
+        isOpen={errorModal.isOpen}
+        onClose={() => setErrorModal({ ...errorModal, isOpen: false })}
+        title={errorModal.title}
+        message={errorModal.message}
       />
     </div>
   );
