@@ -45,6 +45,30 @@ export const ERC20_ABI = [
   },
 ] as const;
 
+export const FAUCET_ABI = [
+  {
+    type: "function",
+    name: "faucet",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "amount", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "getFaucetCooldown",
+    stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "canClaimFaucet",
+    stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ type: "bool" }],
+  },
+] as const;
+
 export const PAYMASTER_ABI = [
   {
     type: "function",

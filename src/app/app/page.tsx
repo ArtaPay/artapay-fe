@@ -13,6 +13,7 @@ import {
   WalletButton,
   BalanceDisplay,
   ActivationModal,
+  FaucetButton,
 } from "@/components/Wallet";
 import { useSmartAccount } from "@/hooks/useSmartAccount";
 import { useApprovalStatus } from "@/hooks/useApprovalStatus";
@@ -89,6 +90,7 @@ export default function Start() {
           <div className="flex flex-col items-end gap-2">
             <WalletButton />
             <BalanceDisplay />
+            <FaucetButton />
           </div>
         </div>
 

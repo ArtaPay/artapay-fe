@@ -26,6 +26,7 @@ import {
 } from "@/config/constants";
 import {
   ERC20_ABI,
+  FAUCET_ABI,
   PAYMENT_PROCESSOR_ABI,
   STABLE_SWAP_ABI,
 } from "@/config/abi";
@@ -335,6 +336,42 @@ export function useSmartAccount() {
         return { txHash, sender: address };
       } catch (err) {
         const message = err instanceof Error ? err.message : "Approve failed";
+        setError(message);
+        setStatus(message);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [ensureClient, getFeeParams]
+  );
+
+  const claimFaucet = useCallback(
+    async (params: { tokenAddress: Address; amount: number }) => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        const { client, address } = await ensureClient();
+        const feeParams = await getFeeParams();
+
+        const faucetData = encodeFunctionData({
+          abi: FAUCET_ABI,
+          functionName: "faucet",
+          args: [BigInt(params.amount)],
+        });
+
+        setStatus("Requesting USDC faucet...");
+        const txHash = await client.sendTransaction({
+          to: params.tokenAddress,
+          data: faucetData,
+          value: BigInt(0),
+          ...feeParams,
+        });
+
+        setStatus("Faucet transaction submitted");
+        return { txHash, sender: address };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Faucet failed";
         setError(message);
         setStatus(message);
         throw err;
@@ -670,6 +707,7 @@ export function useSmartAccount() {
     error,
     sendGaslessTransfer,
     approvePaymaster,
+    claimFaucet,
     initSmartAccount: ensureClient,
     swapTokens,
     payInvoice,
